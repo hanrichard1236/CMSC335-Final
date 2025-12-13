@@ -1,0 +1,25 @@
+{
+  "name": "cnsc335-final",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/hanrichard1236/CNSC335-Final#readme",
+  "bugs": {
+    "url": "https://github.com/hanrichard1236/CNSC335-Final/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanrichard1236/CNSC335-Final.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "final.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1"
+  }
+}
