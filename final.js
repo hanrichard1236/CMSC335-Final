@@ -270,6 +270,43 @@ app.post("/recipes/delete/:id", async (req, res) => {
   res.redirect("/recipes/favorites");
 });
 
+app.get("/recipes/:id", async (req, res) => {
+  const recipeId = req.params.id;
+
+  const url = `https://api.edamam.com/api/recipes/v2/${recipeId}?type=public&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "Accept": "application/json",
+        "Edamam-Account-User": EDAMAM_USER_ID
+      }
+    });
+    const data = await response.json();
+
+    if (!data.recipe) {
+      return res.render("recipes", { recipe: null });
+    }
+
+    const recipe = {
+      edamamId: recipeId,
+      name: data.recipe.label,
+      image: data.recipe.image,
+      source: data.recipe.source,
+      sourceUrl: data.recipe.url,
+      calories: Math.round(data.recipe.calories),
+      servings: data.recipe.yield,
+      totalTime: data.recipe.totalTime,
+      ingredients: data.recipe.ingredientLines,
+    };
+
+    res.render("recipes", { recipe });
+  } catch (err) {
+    console.error(err);
+    res.render("recipes", { recipe: null });
+  }
+});
+
 /* ---------------- START SERVER ---------------- */
 
 app.listen(portNumber, () => {
