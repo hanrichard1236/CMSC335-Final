@@ -10,6 +10,7 @@ require("dotenv").config({
 
 const EDAMAM_APP_ID = process.env.EDAMAM_APP_ID;
 const EDAMAM_APP_KEY = process.env.EDAMAM_APP_KEY;
+const EDAMAM_USER_ID = process.env.EDAMAM_USER_ID;
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -157,8 +158,8 @@ app.get("/recipes/search", (req, res) => {
 });
 
 /* Search results */
-app.get("/recipes/results", async (req, res) => {
-  const query = req.query.q;
+app.post("/recipes/results", async (req, res) => {
+  const query = req.body.query;
   if (!query) {
     return res.render("search", { recipes: [], searchPerformed: false });
   }
@@ -168,7 +169,12 @@ app.get("/recipes/results", async (req, res) => {
   )}&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept": "application/json",
+        "Edamam-Account-User": EDAMAM_USER_ID
+      }
+    });
     const data = await response.json();
 
     const recipes = data.hits.map(hit => ({
@@ -183,10 +189,12 @@ app.get("/recipes/results", async (req, res) => {
       ingredients: hit.recipe.ingredientLines,
     }));
 
-    res.render("search", { recipes, searchPerformed: true });
+
+    
+    res.render("results", { recipes, searchPerformed: true });
   } catch (err) {
     console.error(err);
-    res.render("search", { recipes: [], searchPerformed: true });
+    res.render("results", { recipes: [], searchPerformed: true });
   }
 });
 
