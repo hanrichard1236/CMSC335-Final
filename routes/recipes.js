@@ -5,6 +5,12 @@ const EDAMAM_APP_ID = process.env.EDAMAM_APP_ID;
 const EDAMAM_APP_KEY = process.env.EDAMAM_APP_KEY;
 const EDAMAM_USER_ID = process.env.EDAMAM_USER_ID;
 
+const {
+  saveFavorite,
+  getAllFavorites,
+  deleteFavorite
+} = require("../final");
+
 
 /**
  * Search page
@@ -88,6 +94,40 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.render("recipe", { recipe: null });
+  }
+});
+
+/**
+ * Favorites
+ */
+router.post("/favorite", async (req, res) => {
+  try {
+    const recipe = req.body;
+    await saveFavorite(recipe);
+    res.redirect("/recipes/favorites");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to save favorite");
+  }
+});
+
+router.get("/favorites", async (req, res) => {
+  try {
+    const favorites = await getAllFavorites();
+    res.render("favorites", { favorites });
+  } catch (err) {
+    console.error(err);
+    res.render("favorites", { favorites: [] });
+  }
+});
+
+router.post("/favorites/delete/:id", async (req, res) => {
+  try {
+    await deleteFavorite(req.params.id);
+    res.redirect("/recipes/favorites");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to delete favorite");
   }
 });
 
