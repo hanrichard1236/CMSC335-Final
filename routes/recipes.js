@@ -3,6 +3,8 @@ const router = express.Router();
 
 const EDAMAM_APP_ID = process.env.EDAMAM_APP_ID;
 const EDAMAM_APP_KEY = process.env.EDAMAM_APP_KEY;
+const EDAMAM_USER_ID = process.env.EDAMAM_USER_ID;
+
 
 /**
  * Search page
@@ -26,7 +28,12 @@ router.post("/results", async (req, res) => {
   )}&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept": "application/json",
+        "Edamam-Account-User": EDAMAM_USER_ID
+      }
+    });
     const data = await response.json();
 
     const recipes = data.hits.map(hit => ({
@@ -57,7 +64,12 @@ router.get("/:id", async (req, res) => {
   const url = `https://api.edamam.com/api/recipes/v2/${recipeId}?type=public&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept": "application/json",
+        "Edamam-Account-User": EDAMAM_USER_ID
+      }
+    });
     const data = await response.json();
 
     const recipe = {
