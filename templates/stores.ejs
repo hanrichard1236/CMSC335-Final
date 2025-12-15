@@ -19,30 +19,7 @@
         </header>
 
         <main>
-            <% if (recipes.length === 0) { %>
-            <p class="empty-msg">No saved recipes yet.</p>
-            <% } else { %>
-            <div class="recipe-grid">
-                <% recipes.forEach(recipe => { %>
-                <div class="recipe-card">
-                    <img src="<%= recipe.image %>" alt="<%= recipe.name %>" />
-                    <h3><%= recipe.name %></h3>
-                    <p>Calories: <%= Math.round(recipe.calories) %></p>
-
-                    <a href="<%= recipe.sourceUrl %>" target="_blank">
-                        View Source
-                    </a>
-
-                    <form
-                        action="/recipes/delete/<%= recipe._id %>"
-                        method="POST"
-                    >
-                        <button class="delete-btn">Remove</button>
-                    </form>
-                </div>
-                <% }) %>
-            </div>
-            <% } %>
+            <%- favorites %>
         </main>
     </body>
 </html>
