@@ -7,11 +7,17 @@ const bodyParser = require("body-parser");
 require("dotenv").config({
    path: path.resolve(__dirname, "credentialsDontPost/.env"),
 });
+const routes = require("./routes/recipes");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use("/recipes", routes);
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "templates"));
+
+app.get("/", (req, res) => {
+  res.render("index");
+});
 
 const mongoose = require("mongoose");
 const uri = process.env.MONGO_CONNECTION_STRING;
