@@ -39,7 +39,9 @@ const FavoriteRecipeSchema = new mongoose.Schema(
     totalTime: Number,
     ingredients: [String]
   },
-  { timestamps: true }
+  { timestamps: true, 
+    collection: "favoriteRecipes"
+  }
 );
 
 const FavoriteRecipe = mongoose.model(
@@ -71,6 +73,53 @@ async function deleteAllFavorites() {
   return FavoriteRecipe.deleteMany({});
 }
 
+async function testFavoriteRecipeDB() {
+  console.log("Start Test");
+
+  const testRecipe = {
+    edamamId: "test-recipe-222",
+    name: "Test beef Recipe",
+    image: "beefimage.jpg",
+    source: "Test Source2",
+    sourceUrl: "https://www.twopeasandtheirpod.com/easy-beef/",
+    calories: 700,
+    servings: 3,
+    totalTime: 45,
+    ingredients: [
+      "3 pounds beef",
+      "1 tbsp olive oil",
+      "Salt",
+      "Pepper"
+    ]
+  };
+
+  try {
+    //Save favorite
+    const saved = await saveFavorite(testRecipe);
+    console.log("Saved recipe:");
+    console.log(saved);
+
+    //Fetch all favorites
+    const allFavorites = await getAllFavorites();
+    console.log(`Total favorites in DB: ${allFavorites.length}`);
+
+    //Verify the test recipe exists
+    const found = allFavorites.find(
+      r => r.edamamId === testRecipe.edamamId
+    );
+
+    if (found) {
+      console.log("Test recipe found");
+    } else {
+      console.log("Test recipe NOT found");
+    }
+
+    console.log("Test compleate");
+  } catch (err) {
+    console.error("Test Fail", err);
+  }
+}
+
 module.exports = {
   saveFavorite,
   getAllFavorites,
@@ -81,3 +130,7 @@ module.exports = {
 
 app.listen(portNumber);
 console.log(`main URL http://localhost:${portNumber}/`);
+
+mongoose.connection.once("open", async () => {
+  await testFavoriteRecipeDB();
+});
