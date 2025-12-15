@@ -146,6 +146,41 @@ function renderRecipeGrid(recipes) {
   return html;
 }
 
+function renderResultsGrid(recipes) {
+  if (!recipes || recipes.length === 0) {
+    return `<p class="empty-msg">No recipes found.</p>`;
+  }
+
+  let html = `<div class="recipe-grid">`;
+
+  for (const recipe of recipes) {
+    html += `
+      <div class="recipe-card">
+        <a href="/recipes/${recipe.edamamId}">
+          <img src="${recipe.image}" alt="${recipe.label}" />
+        </a>
+
+        <h3>${recipe.label}</h3>
+        <p>Calories: ${recipe.calories}</p>
+        <p>Time: ${recipe.totalTime || "N/A"} mins</p>
+
+        <a href="/recipes/${recipe.edamamId}">View Details</a>
+
+        <form action="/recipes/save" method="POST">
+          <input type="hidden" name="recipeData" value='${JSON.stringify(recipe)}' />
+
+          <button class="save-btn">
+            Save to Favorites
+          </button>
+        </form>
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
 /* ---------------- ROUTES ---------------- */
 
 app.get("/", (req, res) => {
@@ -189,9 +224,7 @@ app.post("/recipes/results", async (req, res) => {
       ingredients: hit.recipe.ingredientLines,
     }));
 
-
-    
-    res.render("results", { recipes, searchPerformed: true });
+    res.render("results", {resultsHTML: renderResultsGrid(recipes)});
   } catch (err) {
     console.error(err);
     res.render("results", { recipes: [], searchPerformed: true });
