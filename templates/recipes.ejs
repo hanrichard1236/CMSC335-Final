@@ -69,7 +69,20 @@
                     </ul>
 
                     <div style="text-align: center; margin-top: 2rem">
-                        <button
+                        
+                        <form action="/recipes/save" method="POST">
+                        <input type="hidden" name="recipeData" value='<%= JSON.stringify({
+                            edamamId: recipe.edamamId,
+                            label: recipe.name,
+                            image: recipe.image,
+                            source: recipe.source,
+                            url: recipe.sourceUrl,
+                            calories: recipe.calories,
+                            yield: recipe.servings,
+                            totalTime: recipe.totalTime,
+                            ingredients: recipe.ingredients
+                        }) %>' />
+                            <button
                             id="save-favorite-btn"
                             data-id="<%= recipe.edamamId %>"
                             style="
@@ -85,6 +98,7 @@
                         >
                             Save to Favorites
                         </button>
+                        </form>
                     </div>
                 </div>
             <% } %>
