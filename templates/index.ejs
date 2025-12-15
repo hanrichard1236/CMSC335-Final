@@ -45,11 +45,15 @@
                 </ul>
 
                 <!-- required form -->
-                <form action="/recipes/search" method="GET" class="search-form">
+                <form
+                    action="/recipes/results"
+                    method="POST"
+                    class="search-form"
+                >
                     <input
                         type="text"
-                        name="q"
-                        placeholder="Quick search"
+                        name="query"
+                        placeholder="Search for a recipe..."
                         required
                     />
                     <button type="submit">Search</button>
