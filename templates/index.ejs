@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Recipe Finder</title>
+        <link rel="stylesheet" href="/css/styles.css" />
+        <link
+            href="https://fonts.googleapis.com/css?family=Tangerine"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <header>
+            <h1>🍲 Recipe Finder & Saver</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/recipes/search">Search Recipes</a>
+                <a href="/recipes/favorites">Saved Recipes</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="intro">
+                <h2>About This Project</h2>
+                <p>
+                    This website allows users to search for food recipes using
+                    the Edamam Recipe API, view detailed recipe information, and
+                    save their favorite recipes to a database for later access.
+                </p>
+
+                <h3>Navigate the Website</h3>
+                <ul class="link-list">
+                    <li>
+                        🔍 <a href="/recipes/search">Recipe Searcher</a> –
+                        Search recipes using the API
+                    </li>
+                    <li>
+                        📋 <a href="/recipes/search">Found Recipes</a> – View
+                        search results
+                    </li>
+                    <li>
+                        ⭐ <a href="/recipes/favorites">Stored Recipes</a> –
+                        View saved recipes
+                    </li>
+                </ul>
+
+                <!-- required form -->
+                <form action="/recipes/search" method="GET" class="search-form">
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Quick search (e.g. pasta)"
+                        required
+                    />
+                    <button type="submit">Search</button>
+                </form>
+            </section>
+        </main>
+    </body>
+</html>
