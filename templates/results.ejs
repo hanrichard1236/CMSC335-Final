@@ -1,27 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Recipe Results</title>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<body>
-  <h1>Recipes Found</h1>
-  <% if (error) { %>
-    <p><%= error %></p>
-  <% } %>
-  <div class="recipe-grid">
-    <% recipes.forEach(recipe => { %>
-      <a href="/recipes/<%= recipe.edamamId %>" class="recipe-card">
-        <img src="<%= recipe.image %>" alt="<%= recipe.name %>">
-        <h3><%= recipe.name %></h3>
-        <p>Calories: <%= recipe.calories %></p>
-        <p>Time: <%= recipe.totalTime || "N/A" %> mins</p>
-      </a>
-    <% }) %>
-  </div>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Recipe Results</title>
+        <link rel="stylesheet" href="/css/styles.css" />
+        <link
+            href="https://fonts.googleapis.com/css?family=Tangerine"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <header>
+            <h1>📋 Recipes Found</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/recipes/search">Search Recipes</a>
+                <a href="/recipes/favorites">Saved Recipes</a>
+            </nav>
+        </header>
+
+        <main>
+            <% if (error) { %>
+            <p class="empty-msg"><%= error %></p>
+            <% } %>
+
+            <div class="recipe-grid">
+                <% recipes.forEach(recipe => { %>
+                <div class="recipe-card">
+                    <a href="/recipes/<%= recipe.edamamId %>">
+                        <img
+                            src="<%= recipe.image %>"
+                            alt="<%= recipe.name %>"
+                        />
+                    </a>
+                    <h3><%= recipe.name %></h3>
+                    <p>Calories: <%= recipe.calories %></p>
+                    <p>Time: <%= recipe.totalTime || "N/A" %> mins</p>
+
+                    <a href="/recipes/<%= recipe.edamamId %>">View Details</a>
+
+                    <form action="/recipes/favorite" method="POST">
+                        <input
+                            type="hidden"
+                            name="edamamId"
+                            value="<%= recipe.edamamId %>"
+                        />
+                        <input
+                            type="hidden"
+                            name="name"
+                            value="<%= recipe.name %>"
+                        />
+                        <input
+                            type="hidden"
+                            name="image"
+                            value="<%= recipe.image %>"
+                        />
+                        <input
+                            type="hidden"
+                            name="source"
+                            value="<%= recipe.source %>"
+                        />
+                        <input
+                            type="hidden"
+                            name="sourceUrl"
+                            value="<%= recipe.sourceUrl %>"
+                        />
+                        <input
+                            type="hidden"
+                            name="calories"
+                            value="<%= recipe.calories %>"
+                        />
+                        <input
+                            type="hidden"
+                            name="servings"
+                            value="<%= recipe.servings %>"
+                        />
+                        <input
+                            type="hidden"
+                            name="totalTime"
+                            value="<%= recipe.totalTime %>"
+                        />
+                        <% recipe.ingredients.forEach(ingredient => { %>
+                        <input
+                            type="hidden"
+                            name="ingredients[]"
+                            value="<%= ingredient %>"
+                        />
+                        <% }) %>
+                        <button
+                            type="submit"
+                            style="
+                                background-color: #4caf50;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                margin-top: 10px;
+                                font-size: 1rem;
+                                font-weight: 500;
+                            "
+                        >
+                            Save to Favorites
+                        </button>
+                    </form>
+                </div>
+                <% }) %>
+            </div>
+        </main>
+    </body>
 </html>
