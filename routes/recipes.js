@@ -3,132 +3,128 @@ const router = express.Router();
 
 const EDAMAM_APP_ID = process.env.EDAMAM_APP_ID;
 const EDAMAM_APP_KEY = process.env.EDAMAM_APP_KEY;
-const EDAMAM_USER_ID = process.env.EDAMAM_USER_ID;
 
-const {
-  saveFavorite,
-  getAllFavorites,
-  deleteFavorite
-} = require("../final");
+// Import database functions from final.js
+const { getAllFavorites, saveFavorite, deleteFavorite } = require("../final");
 
-
-/**
- * Search page
- */
+/* Search page */
 router.get("/search", (req, res) => {
-  res.render("search");
+    res.render("search", { recipes: [], searchPerformed: false });
 });
 
-/**
- * Results
- */
-router.post("/results", async (req, res) => {
-  const query = req.body.query;
+/* Search results (also handles GET requests from search form) */
+router.get("/results", async (req, res) => {
+    const query = req.query.q;
 
-  if (!query) {
-    return res.render("results", { recipes: [], error: "No search term provided." });
-  }
+    if (!query) {
+        return res.render("search", { recipes: [], searchPerformed: false });
+    }
 
-  const url = `https://api.edamam.com/api/recipes/v2?type=public&q=${encodeURIComponent(
-    query
-  )}&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
+    const url = `https://api.edamam.com/api/recipes/v2?type=public&q=${encodeURIComponent(
+        query
+    )}&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "Accept": "application/json",
-        "Edamam-Account-User": EDAMAM_USER_ID
-      }
-    });
-    const data = await response.json();
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
 
-    const recipes = data.hits.map(hit => ({
-      edamamId: hit.recipe.uri.split("#recipe_")[1],
-      name: hit.recipe.label,
-      image: hit.recipe.image,
-      source: hit.recipe.source,
-      sourceUrl: hit.recipe.url,
-      calories: Math.round(hit.recipe.calories),
-      servings: hit.recipe.yield,
-      totalTime: hit.recipe.totalTime,
-      ingredients: hit.recipe.ingredientLines
-    }));
+        const recipes = data.hits.map((hit) => ({
+            edamamId: hit.recipe.uri.split("#recipe_")[1],
+            label: hit.recipe.label,
+            image: hit.recipe.image,
+            source: hit.recipe.source,
+            url: hit.recipe.url,
+            calories: Math.round(hit.recipe.calories),
+            yield: hit.recipe.yield,
+            totalTime: hit.recipe.totalTime,
+            ingredients: hit.recipe.ingredientLines,
+        }));
 
-    res.render("results", { recipes, error: null });
-  } catch (err) {
-    console.error(err);
-    res.render("results", { recipes: [], error: "Failed to fetch recipes." });
-  }
+        res.render("search", { recipes, searchPerformed: true });
+    } catch (err) {
+        console.error(err);
+        res.render("search", {
+            recipes: [],
+            searchPerformed: true,
+            error: "Failed to fetch recipes.",
+        });
+    }
 });
 
-/**
- * Recipe page
- */
-router.get("/:id", async (req, res) => {
-  const recipeId = req.params.id;
-
-  const url = `https://api.edamam.com/api/recipes/v2/${recipeId}?type=public&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
-
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "Accept": "application/json",
-        "Edamam-Account-User": EDAMAM_USER_ID
-      }
-    });
-    const data = await response.json();
-
-    const recipe = {
-      edamamId: recipeId,
-      name: data.recipe.label,
-      image: data.recipe.image,
-      source: data.recipe.source,
-      sourceUrl: data.recipe.url,
-      calories: Math.round(data.recipe.calories),
-      servings: data.recipe.yield,
-      totalTime: data.recipe.totalTime,
-      ingredients: data.recipe.ingredientLines
-    };
-
-    res.render("recipe", { recipe });
-  } catch (err) {
-    console.error(err);
-    res.render("recipe", { recipe: null });
-  }
-});
-
-/**
- * Favorites
- */
-router.post("/favorite", async (req, res) => {
-  try {
-    const recipe = req.body;
-    await saveFavorite(recipe);
-    res.redirect("/recipes/favorites");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Failed to save favorite");
-  }
-});
-
+/* Favorites/Stored recipes page */
 router.get("/favorites", async (req, res) => {
-  try {
-    const favorites = await getAllFavorites();
-    res.render("favorites", { favorites });
-  } catch (err) {
-    console.error(err);
-    res.render("favorites", { favorites: [] });
-  }
+    try {
+        const recipes = await getAllFavorites();
+        res.render("stores", { recipes });
+    } catch (err) {
+        console.error(err);
+        res.render("stores", { recipes: [] });
+    }
 });
 
-router.post("/favorites/delete/:id", async (req, res) => {
-  try {
-    await deleteFavorite(req.params.id);
-    res.redirect("/recipes/favorites");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Failed to delete favorite");
-  }
+/* Save a recipe to favorites */
+router.post("/save", async (req, res) => {
+    try {
+        const recipeData = JSON.parse(req.body.recipeData);
+
+        const recipe = {
+            edamamId: recipeData.edamamId,
+            name: recipeData.label,
+            image: recipeData.image,
+            source: recipeData.source,
+            sourceUrl: recipeData.url,
+            calories: recipeData.calories,
+            servings: recipeData.yield,
+            totalTime: recipeData.totalTime,
+            ingredients: recipeData.ingredients,
+        };
+
+        await saveFavorite(recipe);
+        res.redirect("/recipes/favorites");
+    } catch (err) {
+        console.error(err);
+        res.redirect("/recipes/search");
+    }
+});
+
+/* Delete a saved recipe */
+router.post("/delete/:id", async (req, res) => {
+    try {
+        await deleteFavorite(req.params.id);
+        res.redirect("/recipes/favorites");
+    } catch (err) {
+        console.error(err);
+        res.redirect("/recipes/favorites");
+    }
+});
+
+/* Individual recipe page */
+router.get("/:id", async (req, res) => {
+    const recipeId = req.params.id;
+
+    const url = `https://api.edamam.com/api/recipes/v2/${recipeId}?type=public&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const recipe = {
+            edamamId: recipeId,
+            label: data.recipe.label,
+            image: data.recipe.image,
+            source: data.recipe.source,
+            url: data.recipe.url,
+            calories: Math.round(data.recipe.calories),
+            servings: data.recipe.yield,
+            totalTime: data.recipe.totalTime,
+            ingredients: data.recipe.ingredientLines,
+        };
+
+        res.render("recipe", { recipe });
+    } catch (err) {
+        console.error(err);
+        res.render("recipe", { recipe: null });
+    }
 });
 
 module.exports = router;
