@@ -227,8 +227,12 @@ app.post("/recipes/results", async (req, res) => {
     res.render("results", {resultsHTML: renderResultsGrid(recipes)});
   } catch (err) {
     console.error(err);
-    res.render("results", { recipes: [], searchPerformed: true });
+    res.render("results", {resultsHTML: "",});
   }
+});
+
+app.get("/recipes/results", (req, res) => {
+  res.render("results", {resultsHTML: "",});
 });
 
 /* Favorites page */

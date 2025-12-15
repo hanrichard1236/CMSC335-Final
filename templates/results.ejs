@@ -19,8 +19,28 @@
             </nav>
         </header>
 
-        <main>
+        <main id="results-container">
             <%- resultsHTML %>
         </main>
+
+        <script>
+            const serverHTML = `<%- resultsHTML %>`;
+            if (serverHTML.trim() !== "") {
+                localStorage.setItem("lastSearchResults", serverHTML);
+            }
+
+            else {
+                const stored = localStorage.getItem("lastSearchResults");
+                if (stored) {
+                    document.getElementById("results-container").innerHTML = stored;
+                }
+                else{
+                    document.getElementById("results-container").innerHTML = `No Recent Searches`;
+                }
+            }
+        </script>
     </body>
 </html>
+
+
+
