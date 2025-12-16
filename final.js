@@ -4,9 +4,11 @@ const path = require("path");
 const portNumber = 7000;
 const bodyParser = require("body-parser");
 
+/*
 require("dotenv").config({
     path: path.resolve(__dirname, "credentialsDontPost/.env"),
 });
+*/
 
 const EDAMAM_APP_ID = process.env.EDAMAM_APP_ID;
 const EDAMAM_APP_KEY = process.env.EDAMAM_APP_KEY;
