@@ -3,4 +3,4 @@ Group Members: Richard Han (rhan1236), Steven Arias (sarias), Sulagna Dash (sula
 YouTube Video Link: https://www.youtube.com/watch?v=Aybs_LvnWpo
 APIs: Recipe Browser (https://develo per.edamam.com/edamam-docs-recipe-api )
 Contact Email:  rhan1236@terpmail.umd.edu
-Deployed App Link: https://notreal.what.terpNel/myApp
+Deployed App Link: 
