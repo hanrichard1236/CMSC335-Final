@@ -4,4 +4,4 @@ App Description: Users can search for food recipes using the Edamam Recipe API, 
 YouTube Video Link: https://www.youtube.com/watch?v=Aybs_LvnWpo
 APIs: Recipe Browser (https://develo per.edamam.com/edamam-docs-recipe-api )
 Contact Email:  rhan1236@terpmail.umd.edu
-Deployed App Link: 
+Deployed App Link: https://cmsc335-final-8xrn.onrender.com
